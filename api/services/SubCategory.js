@@ -13,10 +13,10 @@ var schema = new Schema({
     ref: 'Category',
     index: true
   },
-  image: {
-    type: String,
-    default: ""
-  },
+  images: [{
+image: String
+}],
+
   descriptionTitle: {
     type: String,
     default: ""
@@ -159,7 +159,7 @@ var models = {
             subCatName: {
               "$regex": check
             }
-          }).populate("category", "name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+          }).sort({ order: 1 }).populate("category", "name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);
               callback(err, null);

@@ -1,87 +1,157 @@
 /**
- * HomeController
+ * PopularPostController
  *
- * @description :: Server-side logic for managing homes
+ * @description :: Server-side logic for managing notifications
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-
 module.exports = {
-	save: function(req, res) {
-    if (req.body) {
-      PopularPost.saveData(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
+    saveData: function(req, res) {
+        if (req.body) {
+            PopularPost.saveData(req.body, function(err, respo) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: respo
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getAll: function(req, res) {
+        if (req.body) {
+            PopularPost.getAll(req.body, function(err, respo) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: respo
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    delete: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                //  console.log("not valid");
+                PopularPost.deleteData(req.body, function(err, respo) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: respo
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getOne: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                PopularPost.getOne(req.body, function(err, respo) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: respo
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
 
-  getOne: function(req, res) {
 
-    if (req.body) {
-      PopularPost.getOne(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
+    deleteAll: function(req, res) {
+        if (req.body) {
+            PopularPost.deleteAll(req.body, function(err, respo) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: respo
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
 
-  delete: function(req, res) {
-    if (req.body) {
-      PopularPost.deleteData(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
+    getLimited: function(req, res) {
+        function callback(err, data) {
+            Global.response(err, data, res);
+        }
+        if (req.body) {
+            if (req.body.pagesize && req.body.pagenumber) {
+                PopularPost.findLimited(req.body, res.callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Params"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
+        }
+    },
 
-  getAll: function(req, res) {
-    function callback(err, data) {
-      Global.response(err, data, res);
-    }
-    if (req.body) {
-      PopularPost.getAll(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
-  getAllPopularPost: function(req, res) {
-    function callback(err, data) {
-      Global.response(err, data, res);
-    }
-    if (req.body) {
-      PopularPost.getAllPopularPost(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
-
-  findLimited: function(req, res) {
-    if (req.body) {
-      if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
-        PopularPost.findLimited(req.body, res.callback);
-      } else {
-        res.json({
-          value: false,
-          data: "Please provide parameters"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
-  },
 };
