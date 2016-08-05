@@ -8,7 +8,7 @@
 module.exports = {
 	save: function(req, res) {
     if (req.body) {
-      HomeBanner.saveData(req.body, res.callback);
+      Category.saveData(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -20,7 +20,7 @@ module.exports = {
   getOne: function(req, res) {
 
     if (req.body) {
-      HomeBanner.getOne(req.body, res.callback);
+      Category.getOne(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -31,7 +31,7 @@ module.exports = {
 
   delete: function(req, res) {
     if (req.body) {
-      HomeBanner.deleteData(req.body, res.callback);
+      Category.deleteData(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -45,7 +45,7 @@ module.exports = {
       Global.response(err, data, res);
     }
     if (req.body) {
-      HomeBanner.getAll(req.body, res.callback);
+      Category.getAll(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -53,12 +53,12 @@ module.exports = {
       });
     }
   },
-  getAllHomeBanner: function(req, res) {
+  getAllCategory: function(req, res) {
     function callback(err, data) {
       Global.response(err, data, res);
     }
     if (req.body) {
-      HomeBanner.getAllHomeBanner(req.body, res.callback);
+      Category.getAllCategory(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -70,7 +70,7 @@ module.exports = {
   findLimited: function(req, res) {
     if (req.body) {
       if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
-        HomeBanner.findLimited(req.body, res.callback);
+        Category.findLimited(req.body, res.callback);
       } else {
         res.json({
           value: false,

@@ -127,7 +127,9 @@ module.exports = mongoose.model('Doctor', schema);
     async.parallel([
         function(callback) {
           Doctor.count({
-
+            name: {
+              "$regex": check
+            }
           }).exec(function(err, number) {
             if (err) {
               console.log(err);
@@ -143,7 +145,9 @@ module.exports = mongoose.model('Doctor', schema);
         },
         function(callback) {
           Doctor.find({
-
+            name: {
+              "$regex": check
+            }
           }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);

@@ -117,7 +117,7 @@ var models = {
     async.parallel([
         function(callback) {
           Tags.count({
-            url: {
+            name: {
               '$regex': check
             }
           }).exec(function(err, number) {
@@ -135,10 +135,10 @@ var models = {
         },
         function(callback) {
           Tags.find({
-            url: {
+            name: {
               '$regex': check
             }
-          }).populate("movie").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+          }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);
               callback(err, null);

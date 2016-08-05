@@ -8,7 +8,7 @@
 module.exports = {
 	save: function(req, res) {
     if (req.body) {
-      Blog.saveData(req.body, res.callback);
+      SubCategory.saveData(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -20,7 +20,7 @@ module.exports = {
   getOne: function(req, res) {
 
     if (req.body) {
-      Blog.getOne(req.body, res.callback);
+      SubCategory.getOne(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -31,7 +31,7 @@ module.exports = {
 
   delete: function(req, res) {
     if (req.body) {
-      Blog.deleteData(req.body, res.callback);
+      SubCategory.deleteData(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -45,7 +45,7 @@ module.exports = {
       Global.response(err, data, res);
     }
     if (req.body) {
-      Blog.getAll(req.body, res.callback);
+      SubCategory.getAll(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -53,12 +53,12 @@ module.exports = {
       });
     }
   },
-  getAllBlog: function(req, res) {
+  getAllSubCategory: function(req, res) {
     function callback(err, data) {
       Global.response(err, data, res);
     }
     if (req.body) {
-      Blog.getAllBlog(req.body, res.callback);
+      SubCategory.getAllSubCategory(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -68,9 +68,9 @@ module.exports = {
   },
 
   findLimited: function(req, res) {
-		  if (req.body) {
+    if (req.body) {
       if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
-        Blog.findLimited(req.body, res.callback);
+        SubCategory.findLimited(req.body, res.callback);
       } else {
         res.json({
           value: false,

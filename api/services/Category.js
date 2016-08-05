@@ -4,49 +4,38 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
-  var mongoose = require('mongoose');
-  var Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-  var schema = new Schema({
-    categoryName:{
-      type:String,
-      default:""
-    },
- 	 image : {
- 		 type : String,
- 		 default : ""
- 	 },
-   descriptionTitle:{
-     type:String,
-     default:""
-   },
-   description:{
-     type:String,
-     default:""
-   },
-
- 	 order : {
- 		 type : Number,
- 		 default: 0
- 	 },
-   status : {
-     type: Boolean,
-     default : false
-   },
-   timestamp : {
-     type : Date,
-     default : Date.now()
-   }
-  });
-module.exports = mongoose.model('HomeBanner', schema);
- var models = {
-   saveData: function(data, callback) {
-    var HomeBanner = this(data);
-    HomeBanner.timestamp = new Date();
+var schema = new Schema({
+  name: {
+    type: String,
+    default: ""
+  },
+  order: {
+    type: Number,
+    default: 0
+  },
+  status: {
+    type: Boolean,
+    default: false
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now()
+  }
+});
+module.exports = mongoose.model('Category', schema);
+var models = {
+  saveData: function(data, callback) {
+    var Category = this(data);
+    Category.timestamp = new Date();
     if (data._id) {
       this.findOneAndUpdate({
         _id: data._id
-      }, data,{new : true}).exec(function(err, updated) {
+      }, data, {
+        new: true
+      }).exec(function(err, updated) {
         if (err) {
           console.log(err);
           callback(err, null);
@@ -57,7 +46,7 @@ module.exports = mongoose.model('HomeBanner', schema);
         }
       });
     } else {
-      HomeBanner.save(function(err, created) {
+      Category.save(function(err, created) {
         if (err) {
           callback(err, null);
         } else if (created) {
@@ -127,8 +116,10 @@ module.exports = mongoose.model('HomeBanner', schema);
     data.pagesize = parseInt(data.pagesize);
     async.parallel([
         function(callback) {
-          HomeBanner.count({
-
+          Category.count({
+            name: {
+              "$regex": check
+            }
           }).exec(function(err, number) {
             if (err) {
               console.log(err);
@@ -143,9 +134,11 @@ module.exports = mongoose.model('HomeBanner', schema);
           });
         },
         function(callback) {
-          HomeBanner.find({
-
-          }).populate("movie").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+          Category.find({
+            name: {
+              "$regex": check
+            }
+          }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);
               callback(err, null);
@@ -169,5 +162,5 @@ module.exports = mongoose.model('HomeBanner', schema);
         }
       });
   },
- };
- module.exports = _.assign(module.exports, models);
+};
+module.exports = _.assign(module.exports, models);

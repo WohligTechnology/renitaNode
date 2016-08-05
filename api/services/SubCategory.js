@@ -4,36 +4,59 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
-  var mongoose = require('mongoose');
-  var Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-  var schema = new Schema({
- 	 image : {
- 		 type : String,
- 		 default : ""
- 	 },
- 	 order : {
- 		 type : Number,
- 		 default: 0
- 	 },
-   status : {
-     type: Boolean,
-     default : false
-   },
-   timestamp : {
-     type : Date,
-     default : Date.now()
-   }
-  });
-module.exports = mongoose.model('HomeSlider', schema);
- var models = {
-   saveData: function(data, callback) {
-    var renitahome = this(data);
-    renitahome.timestamp = new Date();
+var schema = new Schema({
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    index: true
+  },
+  image: {
+    type: String,
+    default: ""
+  },
+  descriptionTitle: {
+    type: String,
+    default: ""
+  },
+  description: {
+    type: String,
+    default: ""
+  },
+  subCatName: {
+    type: String,
+    default: ""
+  },
+  subCatDescription: {
+    type: String,
+    default: ""
+  },
+  order: {
+    type: Number,
+    default: 0
+  },
+  status: {
+    type: Boolean,
+    default: false
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now()
+  }
+});
+module.exports = mongoose.model('SubCategory', schema);
+var models = {
+  saveData: function(data, callback) {
+    var SubCategory = this(data);
+    SubCategory.timestamp = new Date();
     if (data._id) {
       this.findOneAndUpdate({
         _id: data._id
-      }, data,{new : true}).exec(function(err, updated) {
+      }, data, {
+        new: true
+      }).exec(function(err, updated) {
         if (err) {
           console.log(err);
           callback(err, null);
@@ -44,7 +67,7 @@ module.exports = mongoose.model('HomeSlider', schema);
         }
       });
     } else {
-      renitahome.save(function(err, created) {
+      SubCategory.save(function(err, created) {
         if (err) {
           callback(err, null);
         } else if (created) {
@@ -114,8 +137,8 @@ module.exports = mongoose.model('HomeSlider', schema);
     data.pagesize = parseInt(data.pagesize);
     async.parallel([
         function(callback) {
-          HomeSlider.count({
-            name: {
+          SubCategory.count({
+            subCatName: {
               "$regex": check
             }
           }).exec(function(err, number) {
@@ -132,11 +155,11 @@ module.exports = mongoose.model('HomeSlider', schema);
           });
         },
         function(callback) {
-          HomeSlider.find({
-            name: {
+          SubCategory.find({
+            subCatName: {
               "$regex": check
             }
-          }).populate("movie").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+          }).populate("category", "name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);
               callback(err, null);
@@ -160,5 +183,5 @@ module.exports = mongoose.model('HomeSlider', schema);
         }
       });
   },
- };
- module.exports = _.assign(module.exports, models);
+};
+module.exports = _.assign(module.exports, models);
