@@ -16,6 +16,10 @@ var schema = new Schema({
     type:String,
     default:""
   },
+  description:{
+    type:String,
+    default:""
+  },
   order: {
     type: Number,
     default: 0

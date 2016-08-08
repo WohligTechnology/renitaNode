@@ -13,18 +13,18 @@ var schema = new Schema({
     ref: 'Category',
     index: true
   },
-  images: [{
-image: String
-}],
-
-  descriptionTitle: {
-    type: String,
-    default: ""
-  },
-  description: {
-    type: String,
-    default: ""
-  },
+//   images: [{
+// image: String
+// }],
+//
+//   descriptionTitle: {
+//     type: String,
+//     default: ""
+//   },
+//   description: {
+//     type: String,
+//     default: ""
+//   },
   subCatName: {
     type: String,
     default: ""
