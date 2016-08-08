@@ -115,9 +115,7 @@ module.exports = mongoose.model('HomeSlider', schema);
     async.parallel([
         function(callback) {
           HomeSlider.count({
-            name: {
-              "$regex": check
-            }
+
           }).exec(function(err, number) {
             if (err) {
               console.log(err);
@@ -133,9 +131,7 @@ module.exports = mongoose.model('HomeSlider', schema);
         },
         function(callback) {
           HomeSlider.find({
-            name: {
-              "$regex": check
-            }
+  
           }).populate("movie").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
             if (err) {
               console.log(err);

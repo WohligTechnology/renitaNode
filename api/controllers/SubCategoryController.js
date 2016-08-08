@@ -135,24 +135,43 @@ module.exports = {
     },
 
     getLimited: function(req, res) {
-        function callback(err, data) {
-            Global.response(err, data, res);
-        }
-        if (req.body) {
-            if (req.body.pagesize && req.body.pagenumber) {
-                SubCategory.findLimited(req.body, res.callback);
-            } else {
-                res.json({
-                    value: false,
-                    data: "Invalid Params"
-                });
-            }
-        } else {
-            res.json({
-                value: false,
-                data: "Invalid Request"
-            });
-        }
+      if (req.body) {
+     if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
+       SubCategory.findLimited(req.body, res.callback);
+     } else {
+       res.json({
+         value: false,
+         data: "Please provide parameters"
+       });
+     }
+   } else {
+     res.json({
+       value: false,
+       data: "Invalid Request"
+     });
+   }
     },
+    // getAllSubCategoryByCategory: function(req, res) {
+    //     if (req.body) {
+    //         SubCategory.getAllSubCategoryByCategory(req.body, function(err, respo) {
+    //             if (err) {
+    //                 res.json({
+    //                     value: false,
+    //                     data: err
+    //                 });
+    //             } else {
+    //                 res.json({
+    //                     value: true,
+    //                     data: respo
+    //                 });
+    //             }
+    //         });
+    //     } else {
+    //         res.json({
+    //             value: false,
+    //             data: "Invalid call"
+    //         });
+    //     }
+    // },
 
 };
