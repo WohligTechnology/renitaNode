@@ -49,11 +49,11 @@ var schema = new Schema({
         default: Date.now()
     }
 });
-module.exports = mongoose.model('Blog', schema);
+module.exports = mongoose.model('BeforeAfter', schema);
 var models = {
     saveData: function(data, callback) {
-        var Blog = this(data);
-        Blog.timestamp = new Date();
+        var BeforeAfter = this(data);
+        BeforeAfter.timestamp = new Date();
         if (data._id) {
             this.findOneAndUpdate({
                 _id: data._id
@@ -70,7 +70,7 @@ var models = {
                 }
             });
         } else {
-            Blog.save(function(err, created) {
+            BeforeAfter.save(function(err, created) {
                 if (err) {
                     callback(err, null);
                 } else if (created) {
@@ -134,7 +134,7 @@ var models = {
     },
 
     getPopularPosts: function(data, callback) {
-        Blog.find({}).sort({
+        BeforeAfter.find({}).sort({
             views: -1
         }).select("name date views image").exec(function(err, found) {
             if (err) {
@@ -155,7 +155,7 @@ var models = {
         data.pagesize = parseInt(data.pagesize);
         async.parallel([
                 function(callback) {
-                    Blog.count({
+                    BeforeAfter.count({
                         name: {
                             '$regex': check
                         }
@@ -173,7 +173,7 @@ var models = {
                     });
                 },
                 function(callback) {
-                    Blog.find({
+                    BeforeAfter.find({
                         name: {
                             '$regex': check
                         }

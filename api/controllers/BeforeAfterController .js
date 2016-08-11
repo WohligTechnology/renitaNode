@@ -1,5 +1,5 @@
 /**
- * SubCategoryController
+ * BeforeAfterController
  *
  * @description :: Server-side logic for managing notifications
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
@@ -7,7 +7,7 @@
 module.exports = {
     saveData: function(req, res) {
         if (req.body) {
-            SubCategory.saveData(req.body, function(err, respo) {
+            BeforeAfter.saveData(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -29,7 +29,7 @@ module.exports = {
     },
     getAll: function(req, res) {
         if (req.body) {
-            SubCategory.getAll(req.body, function(err, respo) {
+            BeforeAfter.getAll(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -53,7 +53,7 @@ module.exports = {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
                 //  console.log("not valid");
-                SubCategory.deleteData(req.body, function(err, respo) {
+                BeforeAfter.deleteData(req.body, function(err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -82,7 +82,7 @@ module.exports = {
     getOne: function(req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
-                SubCategory.getOne(req.body, function(err, respo) {
+                BeforeAfter.getOne(req.body, function(err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -110,10 +110,9 @@ module.exports = {
     },
 
 
-
     deleteAll: function(req, res) {
         if (req.body) {
-            SubCategory.deleteAll(req.body, function(err, respo) {
+            BeforeAfter.deleteAll(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -135,13 +134,16 @@ module.exports = {
     },
 
     getLimited: function(req, res) {
+        function callback(err, data) {
+            Global.response(err, data, res);
+        }
         if (req.body) {
-            if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
-                SubCategory.findLimited(req.body, res.callback);
+            if (req.body.pagesize && req.body.pagenumber) {
+                BeforeAfter.findLimited(req.body, res.callback);
             } else {
                 res.json({
                     value: false,
-                    data: "Please provide parameters"
+                    data: "Invalid Params"
                 });
             }
         } else {
@@ -152,23 +154,15 @@ module.exports = {
         }
     },
 
-    getCatByName: function(req, res) {
-            if (req.body) {
-                if (req.body._id && req.body._id !== "") {
-                    SubCategory.getCatByName(req.body, res.callback);
-                } else {
-                    res.json({
-                        value: false,
-                        data: "Please provide parameters"
-                    });
-                }
-            } else {
-                res.json({
-                    value: false,
-                    data: "Invalid Request"
-                });
-            }
+    getPopularPosts: function(req, res) {
+        if (req.body) {
+            BeforeAfter.getPopularPosts(req.body, res.callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
         }
-
+    },
 
 };
