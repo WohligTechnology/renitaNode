@@ -17,6 +17,10 @@ var schema = new Schema({
         type: String,
         default: ""
     },
+    bannerimage: {
+        type: String,
+        default: ""
+    },
     date: {
         type: Date,
         default: Date.now()
@@ -33,7 +37,7 @@ var schema = new Schema({
     },
     views: {
         type: Number,
-        default: ""
+        default: 0
     },
     order: {
         type: Number,
@@ -95,7 +99,9 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find({}).exec(function(err, found) {
+        this.find({}).sort({
+            order: -1
+        }).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -106,18 +112,7 @@ var models = {
             }
         });
     },
-    getDharmaTvHome: function(data, callback) {
-        this.find({}).exec(function(err, found) {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else if (found && found.length > 0) {
-                callback(null, found);
-            } else {
-                callback(null, []);
-            }
-        });
-    },
+
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
@@ -132,11 +127,46 @@ var models = {
             }
         });
     },
+    getOneBlog: function(data, callback) {
+        var newreturns = {};
+        newreturns.blog = [];
+        newreturns.related = [];
+        this.findOne({
+            "_id": data._id
+        }).populate("tags","name").exec(function(err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                newreturns.blog = found;
+                if (found && found.tags) {
+                    Blog.find({
+                        tags: {
+                            $in: found.tags
+                        },
+                        _id: {
+                            $nin: found._id
+                        }
+                    }).limit(3).exec(function(err, data2) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            newreturns.related = data2;
+                            callback(null, newreturns);
+                        }
+                    });
+                } else {
+                    callback(null, newreturns);
+                }
+            }
+        });
+    },
 
     getPopularPosts: function(data, callback) {
         Blog.find({}).sort({
             views: -1
-        }).select("name date views image").exec(function(err, found) {
+        }).limit(6).select("name date views image").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -145,6 +175,50 @@ var models = {
             }
         });
 
+    },
+
+    getPostTags: function(data, callback) {
+        var newreturns = {};
+        newreturns.popularposts = [];
+        newreturns.tags = [];
+        async.parallel([
+                function(callback) {
+                    Blog.find({}).sort({
+                        views: -1
+                    }).limit(6).select("name date views image").exec(function(err, found) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            newreturns.popularposts = found;
+                            callback(null, newreturns);
+                        }
+                    });
+                },
+                function(callback) {
+                    Tags.find({}).sort({
+                        order: 1
+                    }).select("name").exec(function(err, tags) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            newreturns.tags = tags;
+                            callback(null, newreturns);
+                        }
+                    });
+                }
+            ],
+            function(err, data4) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else if (data4) {
+                    callback(null, newreturns);
+                } else {
+                    callback(null, newreturns);
+                }
+            })
     },
 
     findLimited: function(data, callback) {

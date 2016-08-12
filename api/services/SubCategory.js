@@ -103,7 +103,7 @@ var models = {
             }
         });
     },
-    
+
     getDharmaTvHome: function(data, callback) {
         this.find({}).exec(function(err, found) {
             if (err) {
@@ -134,7 +134,7 @@ var models = {
     getCatByName: function(data, callback) {
         SubCategory.find({
             category: data._id
-        }).populate("category").select("subCatName category").exec(function(err, data) {
+        }).populate("category","name description image").select("subCatName category").exec(function(err, data) {
             if (err) {
                 console.log(err);
                 callback(err, null)
