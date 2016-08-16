@@ -49,6 +49,29 @@ module.exports = {
             });
         }
     },
+    getAllBefore: function(req, res) {
+        if (req.body) {
+            BeforeAfter.getAllBefore(req.body, function(err, respo) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: respo
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+
     delete: function(req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {

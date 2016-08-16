@@ -10,27 +10,26 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
     name: {
         type: String,
-        default: " "
+        default: ""
     },
-  description: {
+    image: {
         type: String,
         default: ""
-
     },
-    order: {
-        type: Number,
-        default: 0
+    description: {
+        type: String,
+        default: ""
     },
     status: {
         type: Boolean,
         default: false
     }
 });
-module.exports = mongoose.model('BeforeAfter', schema);
+module.exports = mongoose.model('Header', schema);
 var models = {
     saveData: function(data, callback) {
-        var BeforeAfter = this(data);
-        BeforeAfter.timestamp = new Date();
+        var Header = this(data);
+        Header.timestamp = new Date();
         if (data._id) {
             this.findOneAndUpdate({
                 _id: data._id
@@ -47,7 +46,7 @@ var models = {
                 }
             });
         } else {
-            BeforeAfter.save(function(err, created) {
+            Header.save(function(err, created) {
                 if (err) {
                     callback(err, null);
                 } else if (created) {
@@ -83,15 +82,14 @@ var models = {
             }
         });
     },
-    getAllBefore: function(data, callback) {
-        this.find({status: true}).select("name").exec(function(err, found) {
+
+    getAllCat: function(data, callback) {
+        Header.find({}).select("name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
-            } else if (found && found.length > 0) {
-                callback(null, found);
             } else {
-                callback(null, []);
+                callback(null, found);
             }
         });
     },
@@ -110,8 +108,21 @@ var models = {
             }
         });
     },
-
-
+    getHeader: function(data, callback) {
+        this.findOne({
+            name: data.name
+        }).exec(function(err, found) {
+        
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (found && Object.keys(found).length > 0) {
+                callback(null, found);
+            } else {
+                callback(null, {});
+            }
+        });
+    },
     findLimited: function(data, callback) {
         var newreturns = {};
         newreturns.data = [];
@@ -120,9 +131,9 @@ var models = {
         data.pagesize = parseInt(data.pagesize);
         async.parallel([
                 function(callback) {
-                    BeforeAfter.count({
+                    Header.count({
                         name: {
-                            '$regex': check
+                            "$regex": check
                         }
                     }).exec(function(err, number) {
                         if (err) {
@@ -138,9 +149,9 @@ var models = {
                     });
                 },
                 function(callback) {
-                    BeforeAfter.find({
+                    Header.find({
                         name: {
-                            '$regex': check
+                            "$regex": check
                         }
                     }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
                         if (err) {

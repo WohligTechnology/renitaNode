@@ -118,6 +118,7 @@ module.exports = mongoose.model('Doctor', schema);
       }
     });
   },
+
   findLimited: function(data, callback) {
     var newreturns = {};
     newreturns.data = [];

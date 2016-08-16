@@ -1,5 +1,5 @@
 /**
- * DoctorController
+ * HeaderController
  *
  * @description :: Server-side logic for managing notifications
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
@@ -7,7 +7,7 @@
 module.exports = {
     saveData: function(req, res) {
         if (req.body) {
-            Doctor.saveData(req.body, function(err, respo) {
+            Header.saveData(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -29,7 +29,7 @@ module.exports = {
     },
     getAll: function(req, res) {
         if (req.body) {
-            Doctor.getAll(req.body, function(err, respo) {
+            Header.getAll(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -50,11 +50,33 @@ module.exports = {
         }
     },
 
+    getAllCat: function(req, res) {
+        if (req.body) {
+            Header.getAllCat(req.body, function(err, respo) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: respo
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
+        }
+    },
     delete: function(req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
                 //  console.log("not valid");
-                Doctor.deleteData(req.body, function(err, respo) {
+                Header.deleteData(req.body, function(err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -83,7 +105,7 @@ module.exports = {
     getOne: function(req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
-                Doctor.getOne(req.body, function(err, respo) {
+                Header.getOne(req.body, function(err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -109,12 +131,41 @@ module.exports = {
             });
         }
     },
+    getHeader: function(req, res) {
+        if (req.body) {
+            if (req.body.name && req.body.name != "") {
+                Header.getHeader(req.body, function(err, respo) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: respo
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid name"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
 
 
 
     deleteAll: function(req, res) {
         if (req.body) {
-            Doctor.deleteAll(req.body, function(err, respo) {
+            Header.deleteAll(req.body, function(err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -141,7 +192,7 @@ module.exports = {
         }
         if (req.body) {
             if (req.body.pagesize && req.body.pagenumber) {
-                Doctor.findLimited(req.body, res.callback);
+                Header.findLimited(req.body, res.callback);
             } else {
                 res.json({
                     value: false,
