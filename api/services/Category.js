@@ -90,6 +90,18 @@ var models = {
             }
         });
     },
+    getAllCat: function(data, callback) {
+        this.find({}).sort({order: 1}).select("name order").exec(function(err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (found && found.length > 0) {
+                callback(null, found);
+            } else {
+                callback(null, []);
+            }
+        });
+    },
 
     getAllCategory: function(data, callback) {
         Category.aggregate([{

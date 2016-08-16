@@ -136,7 +136,7 @@ var models = {
         SubCategory.find({
             category: data._id,
             status: true
-        }).populate("category","name description image").select("subCatName category").exec(function(err, data) {
+        }).populate("category","name description image").select("subCatName category").sort({ order: 1}).exec(function(err, data) {
             if (err) {
                 console.log(err);
                 callback(err, null)
