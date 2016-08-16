@@ -103,9 +103,8 @@ var models = {
             }
         });
     },
-
-    getDharmaTvHome: function(data, callback) {
-        this.find({}).exec(function(err, found) {
+    getAllCat: function(data, callback) {
+        this.find({status: true}).select("subCatName category").populate("category","name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -116,6 +115,8 @@ var models = {
             }
         });
     },
+
+
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
@@ -133,7 +134,8 @@ var models = {
 
     getCatByName: function(data, callback) {
         SubCategory.find({
-            category: data._id
+            category: data._id,
+            status: true
         }).populate("category","name description image").select("subCatName category").exec(function(err, data) {
             if (err) {
                 console.log(err);

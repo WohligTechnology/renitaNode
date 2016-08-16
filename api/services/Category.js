@@ -91,17 +91,33 @@ var models = {
         });
     },
 
-    getAllCat: function(data, callback) {
-        Category.find({}).select("name").exec(function(err, found) {
+    getAllCategory: function(data, callback) {
+        Category.aggregate([{
+            $lookup: {
+                from: "subcategories",
+                localField: "_id",
+                foreignField: "category",
+                as: "subnav"
+            }
+        }, {
+            $project: {
+                _id: 1,
+                name: 1,
+                colours: 1,
+                anchor: 1,
+                subnav: 1
+            }
+        }]).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
-            }  else {
+            } else if (found.length > 0) {
                 callback(null, found);
+            } else {
+                callback([], null);
             }
         });
     },
-
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
