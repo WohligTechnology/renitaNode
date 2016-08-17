@@ -17,8 +17,9 @@ var schema = new Schema({
         default: ""
     },
     url: {
-        type: String,
-        default: 0
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        index: true
     },
     order: {
         type: Number,
@@ -108,7 +109,7 @@ var models = {
     getAll: function(data, callback) {
         this.find({}).sort({
             order: 1
-        }).exec(function(err, found) {
+        }).populate("url","name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -142,11 +143,7 @@ var models = {
         data.pagesize = parseInt(data.pagesize);
         async.parallel([
                 function(callback) {
-                    HomeSlider.count({
-                        url: {
-                            "$regex": check
-                        }
-                    }).exec(function(err, number) {
+                    HomeSlider.count({}).exec(function(err, number) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -160,13 +157,9 @@ var models = {
                     });
                 },
                 function(callback) {
-                    HomeSlider.find({
-                        url: {
-                            "$regex": check
-                        }
-                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                    HomeSlider.find({}).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
                         order: 1
-                    }).exec(function(err, data2) {
+                    }).populate("url", "name").exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
