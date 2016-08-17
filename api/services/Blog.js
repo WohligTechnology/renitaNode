@@ -133,7 +133,7 @@ var models = {
         newreturns.related = [];
         this.findOne({
             "_id": data._id
-        }).populate("tags","name").exec(function(err, found) {
+        }).populate("tags", "name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -251,7 +251,9 @@ var models = {
                         name: {
                             '$regex': check
                         }
-                    }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                    }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                        _id: -1
+                    }).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);

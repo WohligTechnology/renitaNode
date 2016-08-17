@@ -12,7 +12,7 @@ var schema = new Schema({
         type: String,
         default: " "
     },
-  description: {
+    description: {
         type: String,
         default: ""
 
@@ -28,6 +28,33 @@ var schema = new Schema({
 });
 module.exports = mongoose.model('BeforeAfter', schema);
 var models = {
+    sort: function(data, callback) {
+        function callSave(num) {
+            BeforeAfter.saveData({
+                _id: data[num],
+                order: num + 1
+            }, function(err, respo) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    num++;
+                    if (num == data.length) {
+                        callback(null, {
+                            comment: "Data sorted"
+                        });
+                    } else {
+                        callSave(num);
+                    }
+                }
+            });
+        }
+        if (data && data.length > 0) {
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
     saveData: function(data, callback) {
         var BeforeAfter = this(data);
         BeforeAfter.timestamp = new Date();
@@ -84,7 +111,9 @@ var models = {
         });
     },
     getAllBefore: function(data, callback) {
-        this.find({status: true}).select("name").exec(function(err, found) {
+        this.find({
+            status: true
+        }).select("name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -142,7 +171,9 @@ var models = {
                         name: {
                             '$regex': check
                         }
-                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                        order: 1
+                    }).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);

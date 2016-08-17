@@ -35,33 +35,33 @@ var schema = new Schema({
 });
 module.exports = mongoose.model('HomeSlider', schema);
 var models = {
-  sort: function(data, callback) {
-      function callSave(num) {
-          HomeSlider.saveData({
-              _id: data[num],
-              order: num + 1
-          }, function(err, respo) {
-              if (err) {
-                  console.log(err);
-                  callback(err, null);
-              } else {
-                  num++;
-                  if (num == data.length) {
-                      callback(null, {
-                          comment: "Data sorted"
-                      });
-                  } else {
-                      callSave(num);
-                  }
-              }
-          });
-      }
-      if (data && data.length > 0) {
-          callSave(0);
-      } else {
-          callback(null, {});
-      }
-  },
+    sort: function(data, callback) {
+        function callSave(num) {
+            HomeSlider.saveData({
+                _id: data[num],
+                order: num + 1
+            }, function(err, respo) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    num++;
+                    if (num == data.length) {
+                        callback(null, {
+                            comment: "Data sorted"
+                        });
+                    } else {
+                        callSave(num);
+                    }
+                }
+            });
+        }
+        if (data && data.length > 0) {
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
     saveData: function(data, callback) {
         var renitahome = this(data);
         renitahome.timestamp = new Date();
@@ -106,7 +106,9 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find({}).sort({order: 1}).exec(function(err, found) {
+        this.find({}).sort({
+            order: 1
+        }).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -162,7 +164,9 @@ var models = {
                         url: {
                             "$regex": check
                         }
-                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                        order: 1
+                    }).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);

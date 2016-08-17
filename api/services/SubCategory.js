@@ -29,6 +29,10 @@ var schema = new Schema({
         type: String,
         default: ""
     },
+    anchor: {
+        type: String,
+        default: ""
+    },
     subCatDescription: {
         type: String,
         default: ""
@@ -48,6 +52,34 @@ var schema = new Schema({
 });
 module.exports = mongoose.model('SubCategory', schema);
 var models = {
+
+    sort: function(data, callback) {
+        function callSave(num) {
+            SubCategory.saveData({
+                _id: data[num],
+                order: num + 1
+            }, function(err, respo) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    num++;
+                    if (num == data.length) {
+                        callback(null, {
+                            comment: "Data sorted"
+                        });
+                    } else {
+                        callSave(num);
+                    }
+                }
+            });
+        }
+        if (data && data.length > 0) {
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
     saveData: function(data, callback) {
         var SubCategory = this(data);
         SubCategory.timestamp = new Date();
@@ -104,7 +136,9 @@ var models = {
         });
     },
     getAllCat: function(data, callback) {
-        this.find({status: true}).select("subCatName category").populate("category","name").exec(function(err, found) {
+        this.find({
+            status: true
+        }).select("subCatName category").populate("category", "name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -136,7 +170,9 @@ var models = {
         SubCategory.find({
             category: data._id,
             status: true
-        }).populate("category","name description image").select("subCatName category").sort({ order: 1}).exec(function(err, data) {
+        }).populate("category", "name description image").select("subCatName category").sort({
+            order: 1
+        }).exec(function(err, data) {
             if (err) {
                 console.log(err);
                 callback(err, null)
@@ -175,7 +211,9 @@ var models = {
                         subCatName: {
                             '$regex': check
                         }
-                    }).populate("category").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                    }).populate("category").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                        order: 1
+                    }).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
