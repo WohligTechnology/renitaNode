@@ -14,8 +14,7 @@ var lodash = require('lodash');
 var moment = require('moment');
 var MaxImageSize = 1200;
 var request = require("request");
-var requrl = "http://localhost:80/";
-// var requrl = "http://localhost:90/"; ///////////////////////////////////////////////////change kar
+var requrl = "http://localhost:1337/";
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
 var Schema = mongoose.Schema;
@@ -131,6 +130,49 @@ var models = {
                 name: newFilename
             });
             fs.unlink(filename);
+        });
+    },
+    email: function(data, callback) {
+        Password.find().exec(function(err, userdata) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (userdata && userdata.length > 0) {
+                if (data.filename && data.filename !== "") {
+                    request.post({
+                        url: requrl + "config/emailReader/",
+                        json: data
+                    }, function(err, http, body) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            if (body && body.value !== false) {
+                                var sendgrid = require("sendgrid")(userdata[0].name);
+                                sendgrid.send({
+                                    to: data.email,
+                                    from: "renitaskinclinic@gmail.com",
+                                    subject: data.subject,
+                                    fromname: 'Renita Skin Clinic',
+                                    html: body
+                                }, function(err, json) {
+                                    if (err) {
+                                        callback(err, null);
+                                    } else {
+                                        callback(null, json);
+                                    }
+                                });
+                            } else {
+                                callback({ message: "Some error in html" }, null);
+                            }
+                        }
+                    });
+                } else {
+                    callback({ message: "Please provide params" }, null);
+                }
+            } else {
+                callback({ message: "No api keys found" }, null);
+            }
         });
     },
     readUploaded: function(filename, width, height, style, res) {
