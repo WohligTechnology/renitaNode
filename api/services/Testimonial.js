@@ -12,6 +12,13 @@ var schema = new Schema({
         type: String,
         default: " "
     },
+    image: {
+        type: String,
+        default: ""
+    },
+    video:{
+      type:String
+    },
     description: {
         type: String,
         default: " "

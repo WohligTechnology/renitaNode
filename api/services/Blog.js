@@ -51,6 +51,9 @@ var schema = new Schema({
 
         type: Date,
         default: Date.now()
+    },
+    video:{
+      type:String
     }
 });
 module.exports = mongoose.model('Blog', schema);
