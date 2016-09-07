@@ -24,6 +24,10 @@ var schema = new Schema({
         type: String,
         default: ""
     },
+    subdescription:{
+      type:String,
+      default:""
+    },
     order: {
         type: Number,
         default: 0
