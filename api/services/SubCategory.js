@@ -174,7 +174,7 @@ var models = {
         SubCategory.find({
             category: data._id,
             status: true
-        }).populate("category", "name description image").select("subCatName category").sort({
+        }).populate("category", "name description image").select("subCatName category color").sort({
             order: 1
         }).exec(function(err, data) {
             if (err) {
