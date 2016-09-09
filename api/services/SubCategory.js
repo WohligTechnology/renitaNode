@@ -45,6 +45,10 @@ var schema = new Schema({
         type: Boolean,
         default: false
     },
+    color: {
+        type: String,
+        default: false
+    },
     timestamp: {
         type: Date,
         default: Date.now()
