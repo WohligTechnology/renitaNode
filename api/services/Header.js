@@ -16,13 +16,17 @@ var schema = new Schema({
         type: String,
         default: ""
     },
+    image1: {
+        type: String,
+        default: ""
+    },
     description: {
         type: String,
         default: ""
     },
     status: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum:["true","false"]
     }
 });
 module.exports = mongoose.model('Header', schema);
@@ -112,7 +116,7 @@ var models = {
         this.findOne({
             name: data.name
         }).exec(function(err, found) {
-        
+
             if (err) {
                 console.log(err);
                 callback(err, null);

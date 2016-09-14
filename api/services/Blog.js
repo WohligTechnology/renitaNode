@@ -21,6 +21,10 @@ var schema = new Schema({
         type: String,
         default: ""
     },
+    bannerimage1: {
+        type: String,
+        default: ""
+    },
     date: {
         type: Date,
         default: Date.now()
@@ -44,8 +48,8 @@ var schema = new Schema({
         default: 0
     },
     status: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum:["true","false"]
     },
     timestamp: {
 

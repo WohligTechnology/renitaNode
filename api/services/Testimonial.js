@@ -23,18 +23,18 @@ var schema = new Schema({
         type: String,
         default: " "
     },
-    tags: {
-        type: Schema.Types.ObjectId,
-        ref: 'Tags',
-        index: true
-    },
+    // tags: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Tags',
+    //     index: true
+    // },
     order: {
         type: Number,
         default: 0
     },
     status: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum:["true","false"]
     },
     timestamp: {
         type: Date,

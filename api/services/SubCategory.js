@@ -29,10 +29,10 @@ var schema = new Schema({
         type: String,
         default: ""
     },
-    anchor: {
-        type: String,
-        default: ""
-    },
+    // anchor: {
+    //     type: String,
+    //     default: ""
+    // },
     subCatDescription: {
         type: String,
         default: ""
@@ -42,12 +42,8 @@ var schema = new Schema({
         default: 0
     },
     status: {
-        type: Boolean,
-        default: false
-    },
-    color: {
         type: String,
-        default: false
+        enum:["true","false"]
     },
     timestamp: {
         type: Date,

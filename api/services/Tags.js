@@ -17,8 +17,8 @@ var schema = new Schema({
         default: 0
     },
     status: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum:["true","false"]
     },
     timestamp: {
         type: Date,
