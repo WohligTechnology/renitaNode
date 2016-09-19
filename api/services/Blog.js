@@ -261,7 +261,7 @@ var models = {
                             '$regex': check
                         }
                     }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
-                        _id: -1
+                        date: -1
                     }).exec(function(err, data2) {
                         if (err) {
                             console.log(err);

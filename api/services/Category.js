@@ -136,7 +136,9 @@ var models = {
         });
     },
     getAllCat: function(data, callback) {
-        this.find({}).sort({
+        this.find({
+          status:"true"
+        }).sort({
             order: 1
         }).select("name order").exec(function(err, found) {
             if (err) {
