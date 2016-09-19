@@ -138,11 +138,14 @@ var models = {
                 console.log(err);
                 callback(err, null);
             } else if (userdata && userdata.length > 0) {
+              console.log(data);
                 if (data.filename && data.filename !== "") {
                     request.post({
                         url: requrl + "config/emailReader/",
                         json: data
                     }, function(err, http, body) {
+                      console.log(err);
+                      console.log(body);
                         if (err) {
                             console.log(err);
                             callback(err, null);

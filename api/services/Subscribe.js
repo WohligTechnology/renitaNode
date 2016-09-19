@@ -48,7 +48,7 @@ var models = {
                 } else {
                     if (found) {
                       // console.log("email Exists");
-                        callback(null, "Email alredy Exists");
+                        callback("Email alredy Exists",null);
                     } else {
                       // console.log("save");
                         Subscribe.save(function(err, created) {

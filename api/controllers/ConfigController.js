@@ -82,7 +82,9 @@ module.exports = {
         }
     },
     emailReader: function(req, res) {
+      console.log(req.body);
         var isfile2 = fs.existsSync('./views/' + req.body.filename);
+        console.log(isfile2);
         if (isfile2) {
             res.view(req.body.filename, req.body);
         } else {
