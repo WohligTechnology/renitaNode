@@ -168,9 +168,14 @@ var models = {
 
     getCatByName: function(data, callback) {
         SubCategory.find({
+<<<<<<< HEAD
             category: data._id,
             status: true
         }).populate("category", "name description image image1").select("subCatName category color").sort({
+=======
+            category: data._id
+        }).populate("category", "name description image color").select("subCatName category color").sort({
+>>>>>>> f440adbe360a39ded94b6cb9356ad55195dde008
             order: 1
         }).exec(function(err, data) {
             if (err) {
