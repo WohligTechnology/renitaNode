@@ -17,14 +17,14 @@ var schema = new Schema({
         type: String,
         default: ""
     },
-    bannerimage: {
-        type: String,
-        default: ""
-    },
-    bannerimage1: {
-        type: String,
-        default: ""
-    },
+    // bannerimage: {
+    //     type: String,
+    //     default: ""
+    // },
+    // bannerimage1: {
+    //     type: String,
+    //     default: ""
+    // },
     date: {
         type: Date,
         default: Date.now()
