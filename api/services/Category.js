@@ -123,7 +123,7 @@ var models = {
     },
     getAll: function(data, callback) {
         this.find({
-          status:true
+          status:"true"
         }).exec(function(err, found) {
             if (err) {
                 console.log(err);

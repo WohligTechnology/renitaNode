@@ -115,7 +115,7 @@ var models = {
     },
     getAll: function(data, callback) {
         this.find({
-          status:true
+          status:"true"
         }).sort({
             order: 1
         }).exec(function(err, found) {

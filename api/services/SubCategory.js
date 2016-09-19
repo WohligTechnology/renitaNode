@@ -125,7 +125,7 @@ var models = {
     },
     getAll: function(data, callback) {
         this.find({
-          status:true
+          status:"true"
         }).exec(function(err, found) {
             if (err) {
                 console.log(err);
@@ -139,7 +139,7 @@ var models = {
     },
     getAllCat: function(data, callback) {
         this.find({
-            status: true
+            status: "true"
         }).select("subCatName category").populate("category", "name").exec(function(err, found) {
             if (err) {
                 console.log(err);
@@ -171,7 +171,7 @@ var models = {
     getCatByName: function(data, callback) {
         SubCategory.find({
             category: data._id,
-            status: true
+            status: "true"
         }).populate("category", "name description image image1 color").select("subCatName category color").sort({
             order: 1
         }).exec(function(err, data) {
