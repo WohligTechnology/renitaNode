@@ -106,7 +106,9 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find({}).sort({
+        this.find({
+          status:true
+        }).sort({
             order: -1
         }).exec(function(err, found) {
             if (err) {

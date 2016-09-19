@@ -124,7 +124,9 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find({}).exec(function(err, found) {
+        this.find({
+          status:true
+        }).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -168,14 +170,9 @@ var models = {
 
     getCatByName: function(data, callback) {
         SubCategory.find({
-<<<<<<< HEAD
             category: data._id,
             status: true
-        }).populate("category", "name description image image1").select("subCatName category color").sort({
-=======
-            category: data._id
-        }).populate("category", "name description image color").select("subCatName category color").sort({
->>>>>>> f440adbe360a39ded94b6cb9356ad55195dde008
+        }).populate("category", "name description image image1 color").select("subCatName category color").sort({
             order: 1
         }).exec(function(err, data) {
             if (err) {
