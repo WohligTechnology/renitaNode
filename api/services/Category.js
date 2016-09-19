@@ -166,9 +166,13 @@ var models = {
                 name: 1,
                 colours: 1,
                 anchor: 1,
-                subnav: 1
+                subnav: 1,
+                status:1
             }
-        }]).exec(function(err, found) {
+        },
+      {
+        $match:{ status: "true"}
+      }]).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
