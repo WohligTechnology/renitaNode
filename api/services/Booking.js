@@ -18,9 +18,14 @@ var schema = new Schema({
     },
     gender: {
         type: String,
-        enum: ['Female', 'Male']
+        default:""
 
     },
+    // gender: {
+    //     type: String,
+    //     enum: ['Female', 'Male']
+    //
+    // },
     mobile: {
         type: Number,
         required: true
