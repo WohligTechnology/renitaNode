@@ -61,12 +61,12 @@ var schema = new Schema({
         default: Date.now()
     }
 });
-module.exports = mongoose.model('Booking', schema);
+module.exports = mongoose.model('ContactUs', schema);
 var models = {
 
     saveData: function(data, callback) {
-        var Booking = this(data);
-        Booking.timestamp = new Date();
+        var ContactUs = this(data);
+        ContactUs.timestamp = new Date();
         if (data._id) {
             this.findOneAndUpdate({
                 _id: data._id
@@ -94,12 +94,12 @@ var models = {
                   if(_.isEmpty(data)){
                     callback("No Data found",null);
                   } else {
-                    Booking.save(function(err, created) {
+                    ContactUs.save(function(err, created) {
                         if (err) {
                             callback(err, null);
                         } else {
                           if(_.isEmpty(created)){
-                            callback("There was an error while saving booking data!",null);
+                            callback("There was an error while saving ContactUs data!",null);
                           }
                           else {
                             callback(null,created);
@@ -179,7 +179,7 @@ var models = {
                     });
                 },
                 function(callback) {
-                    Booking.find({
+                    ContactUs.find({
                         email: {
                             '$regex': check
                         }

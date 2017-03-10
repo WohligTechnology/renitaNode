@@ -24,6 +24,9 @@ var schema = new Schema({
     status: {
         type: String,
         enum:["true","false"]
+    },
+      video:{
+      type:String
     }
 });
 module.exports = mongoose.model('BeforeAfter', schema);

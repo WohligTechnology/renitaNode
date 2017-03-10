@@ -48,6 +48,9 @@ var schema = new Schema({
     timestamp: {
         type: Date,
         default: Date.now()
+    },
+      video:{
+      type:String
     }
 });
 module.exports = mongoose.model('SubCategory', schema);
