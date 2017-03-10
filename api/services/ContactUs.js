@@ -32,7 +32,6 @@ var schema = new Schema({
     },
     alternateMobile: {
         type: Number,
-        required: true
     },
     email: {
         type: String,
