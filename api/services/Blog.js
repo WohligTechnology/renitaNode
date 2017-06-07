@@ -71,7 +71,7 @@ module.exports = mongoose.model('Blog', schema);
 //     }
 // });
 var models = {
-    saveData: function (data, callback) {
+    saveData: function(data, callback) {
         var Blog = this(data);
         Blog.timestamp = new Date();
         if (data._id) {
@@ -79,7 +79,7 @@ var models = {
                 _id: data._id
             }, data, {
                 new: true
-            }).exec(function (err, updated) {
+            }).exec(function(err, updated) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -90,7 +90,7 @@ var models = {
                 }
             });
         } else {
-            Blog.save(function (err, created) {
+            Blog.save(function(err, created) {
                 if (err) {
                     callback(err, null);
                 } else if (created) {
@@ -101,10 +101,10 @@ var models = {
             });
         }
     },
-    deleteData: function (data, callback) {
+    deleteData: function(data, callback) {
         this.findOneAndRemove({
             _id: data._id
-        }, function (err, deleted) {
+        }, function(err, deleted) {
             if (err) {
                 callback(err, null);
             } else if (deleted) {
@@ -114,12 +114,12 @@ var models = {
             }
         });
     },
-    getAll: function (data, callback) {
+    getAll: function(data, callback) {
         this.find({
             status: "true"
         }).sort({
             order: -1
-        }).exec(function (err, found) {
+        }).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -131,10 +131,10 @@ var models = {
         });
     },
 
-    getOne: function (data, callback) {
+    getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
-        }).exec(function (err, found) {
+        }).exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -145,13 +145,13 @@ var models = {
             }
         });
     },
-    getOneBlog: function (data, callback) {
+    getOneBlog: function(data, callback) {
         var newreturns = {};
         newreturns.blog = [];
         newreturns.related = [];
         this.findOne({
             "_id": data._id
-        }).populate("tags", "name").exec(function (err, found) {
+        }).populate("tags", "name").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -165,7 +165,7 @@ var models = {
                         _id: {
                             $nin: found._id
                         }
-                    }).limit(3).exec(function (err, data2) {
+                    }).limit(3).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -181,10 +181,10 @@ var models = {
         });
     },
 
-    getPopularPosts: function (data, callback) {
+    getPopularPosts: function(data, callback) {
         Blog.find({}).sort({
             views: -1
-        }).limit(6).select("name date views image").exec(function (err, found) {
+        }).limit(6).select("name date views image").exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -195,15 +195,15 @@ var models = {
 
     },
 
-    getPostTags: function (data, callback) {
+    getPostTags: function(data, callback) {
         var newreturns = {};
         newreturns.popularposts = [];
         newreturns.tags = [];
         async.parallel([
-                function (callback) {
+                function(callback) {
                     Blog.find({}).sort({
                         views: -1
-                    }).limit(6).select("name date views image").exec(function (err, found) {
+                    }).limit(6).select("name date views image").exec(function(err, found) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -213,10 +213,10 @@ var models = {
                         }
                     });
                 },
-                function (callback) {
+                function(callback) {
                     Tags.find({}).sort({
                         order: 1
-                    }).select("name").exec(function (err, tags) {
+                    }).select("name").exec(function(err, tags) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -227,7 +227,7 @@ var models = {
                     });
                 }
             ],
-            function (err, data4) {
+            function(err, data4) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -239,77 +239,24 @@ var models = {
             })
     },
 
-    findLimited: function (data, callback) {
-        // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
-        var queryString = {};
+
+    findLimited: function(data, callback) {
         var newreturns = {};
-        var countObj = {};
         newreturns.data = [];
+        var check = new RegExp(data.search, "i");
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
-        var tagIdArray = [];
-        _.each(data.tagId, function (n) {
-            tagIdArray.push(mongoose.Types.ObjectId(n));
-        });
-
-        if (data.search == "" || data.search == undefined) {
-            if (data.tagId.length > 0) {
-                queryString = {
-                    "tags": {
-                        $in: tagIdArray
-                    },
-                };
-            }
-            queryString.status = true
-        } else if (data.search != "") {
-            var trimText = data.search.trim();
-            var splitText = [];
-            splitText = trimText.split(' ');
-            var search = new RegExp('^' + trimText);
-            if (data.tagId.length > 0) {
-                queryString.$and = [{
-                        "tags": {
-                            $in: tagIdArray
-                        },
-                    },
-                    {
-                        "name": {
-                            $regex: search,
-                            $options: "i"
-                        }
-                    }
-                ];
-            } else {
-                queryString = {
-                    "name": {
-                        $regex: search,
-                        $options: "i"
-                    }
-                }
-            }
-            queryString.status = true;
-            console.log("queryString", queryString);
-        }
-
         async.parallel([
-                function (callback) {
-                    if (data.search == "" || data.search == undefined) {
-                        countObj = {};
-                    } else {
-                        countObj = {
-                            "name": {
-                                $regex: search,
-                                $options: "i"
-                            }
+                function(callback) {
+                    Blog.count({
+                        name: {
+                            '$regex': check
                         }
-                    }
-                    Blog.count(countObj).exec(function (err, number) {
-                        console.log("number count", number);
+                    }).exec(function(err, number) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
                         } else if (number && number !== "") {
-                            console.log("number", number);
                             newreturns.total = number;
                             newreturns.totalpages = Math.ceil(number / data.pagesize);
                             callback(null, newreturns);
@@ -318,48 +265,27 @@ var models = {
                         }
                     });
                 },
-                function (callback) {
-                    Blog.aggregate([{
-                            "$sort": {
-                                "date": -1
-                            }
-                        }, {
-                            "$unwind": "$tags"
-                        },
-
-                        // Now filter those document for the elements that match
-                        {
-                            "$match": queryString
-                        },
-                        {
-                            "$skip": data.pagesize * (data.pagenumber - 1)
-                        },
-                        {
-                            "$limit": data.pagesize
+                function(callback) {
+                    Blog.find({
+                        name: {
+                            '$regex': check
                         }
-
-                    ]).exec(function (err, tagFound) {
-                        // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
+                    }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                        date: -1
+                    }).exec(function(err, data2) {
                         if (err) {
-                            console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
-                            callback(err, []);
+                            console.log(err);
+                            callback(err, null);
+                        } else if (data2 && data2.length > 0) {
+                            newreturns.data = data2;
+                            callback(null, newreturns);
                         } else {
-                            // Blog.populate("tags", "_id name")
-                            var option = {
-                                path: "tags",
-                                model: "Tags"
-                            }
-                            Blog.populate(tagFound, option, function (err, populatedTagFound) {
-                                newreturns.data = populatedTagFound;
-                                callback(null, newreturns);
-                            })
-
-                            // callback(null, newreturns);
+                            callback(null, newreturns);
                         }
-                    })
+                    });
                 }
             ],
-            function (err, data4) {
+            function(err, data4) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -371,8 +297,10 @@ var models = {
             });
     },
 
+
+
     //To get blogs by tags ---- currently not in use
-    getBlogByTags: function (data, callback) {
+    getBlogByTags: function(data, callback) {
         // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
         var queryString = {};
         var newreturns = {};
@@ -381,7 +309,7 @@ var models = {
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
         var tagIdArray = [];
-        _.each(data.tagId, function (n) {
+        _.each(data.tagId, function(n) {
             tagIdArray.push(mongoose.Types.ObjectId(n));
         });
 
@@ -401,17 +329,15 @@ var models = {
             var search = new RegExp('^' + trimText);
             if (data.tagId.length > 0) {
                 queryString.$and = [{
-                        "tags": {
-                            $in: tagIdArray
-                        },
+                    "tags": {
+                        $in: tagIdArray
                     },
-                    {
-                        "name": {
-                            $regex: search,
-                            $options: "i"
-                        }
+                }, {
+                    "name": {
+                        $regex: search,
+                        $options: "i"
                     }
-                ];
+                }];
             } else {
                 queryString = {
                     "name": {
@@ -425,7 +351,7 @@ var models = {
         }
 
         async.parallel([
-                function (callback) {
+                function(callback) {
                     if (data.search == "" || data.search == undefined) {
                         countObj = {};
                     } else {
@@ -436,7 +362,7 @@ var models = {
                             }
                         }
                     }
-                    Blog.count(countObj).exec(function (err, number) {
+                    Blog.count(countObj).exec(function(err, number) {
                         console.log("number count", number);
                         if (err) {
                             console.log(err);
@@ -451,7 +377,7 @@ var models = {
                         }
                     });
                 },
-                function (callback) {
+                function(callback) {
                     Blog.aggregate([{
                             "$sort": {
                                 "date": -1
@@ -463,15 +389,13 @@ var models = {
                         // Now filter those document for the elements that match
                         {
                             "$match": queryString
-                        },
-                        {
+                        }, {
                             "$skip": data.pagesize * (data.pagenumber - 1)
-                        },
-                        {
+                        }, {
                             "$limit": data.pagesize
                         }
 
-                    ]).exec(function (err, tagFound) {
+                    ]).exec(function(err, tagFound) {
                         // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
                         if (err) {
                             console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
@@ -482,7 +406,7 @@ var models = {
                                 path: "tags",
                                 model: "Tags"
                             }
-                            Blog.populate(tagFound, option, function (err, populatedTagFound) {
+                            Blog.populate(tagFound, option, function(err, populatedTagFound) {
                                 newreturns.data = populatedTagFound;
                                 callback(null, newreturns);
                             })
@@ -492,7 +416,7 @@ var models = {
                     })
                 }
             ],
-            function (err, data4) {
+            function(err, data4) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -502,7 +426,6 @@ var models = {
                     callback(null, newreturns);
                 }
             });
-
     }
 };
 module.exports = _.assign(module.exports, models);
