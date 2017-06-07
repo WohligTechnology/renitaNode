@@ -290,11 +290,39 @@ var models = {
     //To get blogs by tags
     getBlogByTags: function (data, callback) {
         // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
-        console.log("ObjectId(data.tagId)", data.tagId);
+        var queryString = {};
+        data.pagenumber = parseInt(data.pagenumber);
+        data.pagesize = parseInt(data.pagesize);
         var tagIdArray = [];
         _.each(data.tagId, function (n) {
             tagIdArray.push(mongoose.Types.ObjectId(n));
         });
+
+        if (data.search == "" || data.search == undefined) {
+            queryString = {
+                "tags": {
+                    $in: tagIdArray
+                },
+            };
+            queryString.status = true
+        } else if (data.search != "") {
+            var trimText = data.search.trim();
+            var splitText = [];
+            splitText = trimText.split(' ');
+            var search = new RegExp('^' + trimText);
+            queryString.$and = [{
+                "tags": {
+                    $in: tagIdArray
+                },
+            }, {
+                "name": {
+                    $regex: search,
+                    $options: "i"
+                }
+            }];
+            queryString.status = true
+        }
+
         Blog.aggregate([{
                 "$sort": {
                     "date": -1
@@ -305,13 +333,14 @@ var models = {
 
             // Now filter those document for the elements that match
             {
-                "$match": {
-                    "tags": {
-                        $in: tagIdArray
-                    },
-                    status: true
-                }
+                "$match": queryString
             },
+            {
+                "$skip": data.pagesize * (data.pagenumber - 1)
+            },
+            {
+                "$limit": data.pagesize
+            }
 
         ], function (err, tagFound) {
             // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
