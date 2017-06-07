@@ -299,27 +299,39 @@ var models = {
         });
 
         if (data.search == "" || data.search == undefined) {
-            queryString = {
-                "tags": {
-                    $in: tagIdArray
-                },
-            };
+            if (data.tagId.length > 0) {
+                queryString = {
+                    "tags": {
+                        $in: tagIdArray
+                    },
+                };
+            }
+
             queryString.status = true
         } else if (data.search != "") {
             var trimText = data.search.trim();
             var splitText = [];
             splitText = trimText.split(' ');
             var search = new RegExp('^' + trimText);
-            queryString.$and = [{
-                "tags": {
-                    $in: tagIdArray
-                },
-            }, {
-                "name": {
+            if (data.tagId.length > 0) {
+                queryString.$and = [{
+                        "tags": {
+                            $in: tagIdArray
+                        },
+                    },
+                    {
+                        "name": {
+                            $regex: search,
+                            $options: "i"
+                        }
+                    }
+                ];
+            } else {
+                queryString.name = {
                     $regex: search,
                     $options: "i"
                 }
-            }];
+            }
             queryString.status = true
         }
 
