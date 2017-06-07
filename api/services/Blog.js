@@ -6,7 +6,7 @@
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-
+var ObjectId = Schema.ObjectId;
 var schema = new Schema({
     name: {
         type: String,
@@ -49,20 +49,20 @@ var schema = new Schema({
     },
     status: {
         type: String,
-        enum:["true","false"]
+        enum: ["true", "false"]
     },
     timestamp: {
 
         type: Date,
         default: Date.now()
     },
-    video:{
-      type:String
+    video: {
+        type: String
     }
 });
 module.exports = mongoose.model('Blog', schema);
 var models = {
-    saveData: function(data, callback) {
+    saveData: function (data, callback) {
         var Blog = this(data);
         Blog.timestamp = new Date();
         if (data._id) {
@@ -70,7 +70,7 @@ var models = {
                 _id: data._id
             }, data, {
                 new: true
-            }).exec(function(err, updated) {
+            }).exec(function (err, updated) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -81,7 +81,7 @@ var models = {
                 }
             });
         } else {
-            Blog.save(function(err, created) {
+            Blog.save(function (err, created) {
                 if (err) {
                     callback(err, null);
                 } else if (created) {
@@ -92,10 +92,10 @@ var models = {
             });
         }
     },
-    deleteData: function(data, callback) {
+    deleteData: function (data, callback) {
         this.findOneAndRemove({
             _id: data._id
-        }, function(err, deleted) {
+        }, function (err, deleted) {
             if (err) {
                 callback(err, null);
             } else if (deleted) {
@@ -105,12 +105,12 @@ var models = {
             }
         });
     },
-    getAll: function(data, callback) {
+    getAll: function (data, callback) {
         this.find({
-          status:"true"
+            status: "true"
         }).sort({
             order: -1
-        }).exec(function(err, found) {
+        }).exec(function (err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -122,10 +122,10 @@ var models = {
         });
     },
 
-    getOne: function(data, callback) {
+    getOne: function (data, callback) {
         this.findOne({
             "_id": data._id
-        }).exec(function(err, found) {
+        }).exec(function (err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -136,13 +136,13 @@ var models = {
             }
         });
     },
-    getOneBlog: function(data, callback) {
+    getOneBlog: function (data, callback) {
         var newreturns = {};
         newreturns.blog = [];
         newreturns.related = [];
         this.findOne({
             "_id": data._id
-        }).populate("tags", "name").exec(function(err, found) {
+        }).populate("tags", "name").exec(function (err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -156,7 +156,7 @@ var models = {
                         _id: {
                             $nin: found._id
                         }
-                    }).limit(3).exec(function(err, data2) {
+                    }).limit(3).exec(function (err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -172,10 +172,10 @@ var models = {
         });
     },
 
-    getPopularPosts: function(data, callback) {
+    getPopularPosts: function (data, callback) {
         Blog.find({}).sort({
             views: -1
-        }).limit(6).select("name date views image").exec(function(err, found) {
+        }).limit(6).select("name date views image").exec(function (err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -186,15 +186,15 @@ var models = {
 
     },
 
-    getPostTags: function(data, callback) {
+    getPostTags: function (data, callback) {
         var newreturns = {};
         newreturns.popularposts = [];
         newreturns.tags = [];
         async.parallel([
-                function(callback) {
+                function (callback) {
                     Blog.find({}).sort({
                         views: -1
-                    }).limit(6).select("name date views image").exec(function(err, found) {
+                    }).limit(6).select("name date views image").exec(function (err, found) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -204,10 +204,10 @@ var models = {
                         }
                     });
                 },
-                function(callback) {
+                function (callback) {
                     Tags.find({}).sort({
                         order: 1
-                    }).select("name").exec(function(err, tags) {
+                    }).select("name").exec(function (err, tags) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -218,7 +218,7 @@ var models = {
                     });
                 }
             ],
-            function(err, data4) {
+            function (err, data4) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -230,19 +230,19 @@ var models = {
             })
     },
 
-    findLimited: function(data, callback) {
+    findLimited: function (data, callback) {
         var newreturns = {};
         newreturns.data = [];
         var check = new RegExp(data.search, "i");
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
         async.parallel([
-                function(callback) {
+                function (callback) {
                     Blog.count({
                         name: {
                             '$regex': check
                         }
-                    }).exec(function(err, number) {
+                    }).exec(function (err, number) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -255,14 +255,14 @@ var models = {
                         }
                     });
                 },
-                function(callback) {
+                function (callback) {
                     Blog.find({
                         name: {
                             '$regex': check
                         }
                     }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
                         date: -1
-                    }).exec(function(err, data2) {
+                    }).exec(function (err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -275,7 +275,7 @@ var models = {
                     });
                 }
             ],
-            function(err, data4) {
+            function (err, data4) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -286,5 +286,42 @@ var models = {
                 }
             });
     },
+
+    //To get blogs by tags
+    getBlogByTags: function (data, callback) {
+        // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
+        console.log("ObjectId(data.tagId)", data.tagId);
+        var tagIdArray = [];
+        _.each(data.tagId, function (n) {
+            tagIdArray.push(mongoose.Types.ObjectId(n));
+        });
+        Blog.aggregate([{
+                "$sort": {
+                    "date": -1
+                }
+            }, {
+                "$unwind": "$tags"
+            },
+
+            // Now filter those document for the elements that match
+            {
+                "$match": {
+                    "tags": {
+                        $in: tagIdArray
+                    },
+                    status: true
+                }
+            },
+
+        ], function (err, tagFound) {
+            // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
+            if (err) {
+                console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
+                callback(err, []);
+            } else {
+                callback(null, tagFound);
+            }
+        })
+    }
 };
 module.exports = _.assign(module.exports, models);

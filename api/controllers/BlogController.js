@@ -5,9 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 module.exports = {
-    saveData: function(req, res) {
+    saveData: function (req, res) {
         if (req.body) {
-            Blog.saveData(req.body, function(err, respo) {
+            Blog.saveData(req.body, function (err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -27,9 +27,9 @@ module.exports = {
             });
         }
     },
-    getAll: function(req, res) {
+    getAll: function (req, res) {
         if (req.body) {
-            Blog.getAll(req.body, function(err, respo) {
+            Blog.getAll(req.body, function (err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -49,11 +49,11 @@ module.exports = {
             });
         }
     },
-    delete: function(req, res) {
+    delete: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
                 //  console.log("not valid");
-                Blog.deleteData(req.body, function(err, respo) {
+                Blog.deleteData(req.body, function (err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -79,10 +79,10 @@ module.exports = {
             });
         }
     },
-    getOne: function(req, res) {
+    getOne: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
-                Blog.getOne(req.body, function(err, respo) {
+                Blog.getOne(req.body, function (err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -108,10 +108,10 @@ module.exports = {
             });
         }
     },
-    getOneBlog: function(req, res) {
+    getOneBlog: function (req, res) {
         if (req.body) {
             if (req.body._id && req.body._id != "") {
-                Blog.getOneBlog(req.body, function(err, respo) {
+                Blog.getOneBlog(req.body, function (err, respo) {
                     if (err) {
                         res.json({
                             value: false,
@@ -139,9 +139,9 @@ module.exports = {
     },
 
 
-    deleteAll: function(req, res) {
+    deleteAll: function (req, res) {
         if (req.body) {
-            Blog.deleteAll(req.body, function(err, respo) {
+            Blog.deleteAll(req.body, function (err, respo) {
                 if (err) {
                     res.json({
                         value: false,
@@ -162,7 +162,7 @@ module.exports = {
         }
     },
 
-    getLimited: function(req, res) {
+    getLimited: function (req, res) {
         function callback(err, data) {
             Global.response(err, data, res);
         }
@@ -183,7 +183,7 @@ module.exports = {
         }
     },
 
-    getPopularPosts: function(req, res) {
+    getPopularPosts: function (req, res) {
         if (req.body) {
             Blog.getPopularPosts(req.body, res.callback);
         } else {
@@ -194,15 +194,19 @@ module.exports = {
         }
     },
 
-    getPostTags: function(req, res){
-      if (req.body) {
-          Blog.getPostTags(req.body, res.callback);
-      } else {
-          res.json({
-              value: false,
-              data: "Invalid Request"
-          });
-      }
+    getPostTags: function (req, res) {
+        if (req.body) {
+            Blog.getPostTags(req.body, res.callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Request"
+            });
+        }
     },
 
+    //To get blogs by tags
+    getBlogByTags: function (req, res) {
+        Blog.getBlogByTags(req.body, res.callback);
+    }
 };
