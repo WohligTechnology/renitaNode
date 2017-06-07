@@ -50,8 +50,7 @@ var schema = new Schema({
         default: 0
     },
     status: {
-        type: String,
-        enum: ["true", "false"]
+        type: Boolean
     },
     timestamp: {
 
@@ -321,7 +320,7 @@ var models = {
                     },
                 };
             }
-            queryString.status = true
+            queryString.status = "true"
         } else if (data.search != "") {
             var trimText = data.search.trim();
             var splitText = [];
@@ -346,7 +345,7 @@ var models = {
                     }
                 }
             }
-            queryString.status = true;
+            queryString.status = "true";
             console.log("queryString", queryString);
         }
 
@@ -378,40 +377,20 @@ var models = {
                     });
                 },
                 function(callback) {
-                    Blog.aggregate([{
-                            "$sort": {
-                                "date": -1
-                            }
-                        }, {
-                            "$unwind": "$tags"
-                        },
-
-                        // Now filter those document for the elements that match
-                        {
-                            "$match": queryString
-                        }, {
-                            "$skip": data.pagesize * (data.pagenumber - 1)
-                        }, {
-                            "$limit": data.pagesize
-                        }
-
-                    ]).exec(function(err, tagFound) {
-                        // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
+                      console.log("queryString",queryString);
+                        Blog.find(queryString).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+                            date: -1
+                        }).exec(function (err, tagFound) {
                         if (err) {
                             console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
                             callback(err, []);
                         } else {
-                            // Blog.populate("tags", "_id name")
                             var option = {
                                 path: "tags",
                                 model: "Tags"
                             }
-                            Blog.populate(tagFound, option, function(err, populatedTagFound) {
-                                newreturns.data = populatedTagFound;
-                                callback(null, newreturns);
-                            })
-
-                            // callback(null, newreturns);
+                            newreturns.data = tagFound;
+                            callback(null, newreturns);
                         }
                     })
                 }
