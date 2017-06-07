@@ -4,7 +4,9 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
+// Mongoose Globals
 var mongoose = require('mongoose');
+// global["deepPopulate"] = require('mongoose-deep-populate')(mongoose);
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var schema = new Schema({
@@ -61,6 +63,13 @@ var schema = new Schema({
     }
 });
 module.exports = mongoose.model('Blog', schema);
+// schema.plugin(deepPopulate, {
+//     populate: {
+//         'tags': {
+//             select: "_id name"
+//         }
+//     }
+// });
 var models = {
     saveData: function (data, callback) {
         var Blog = this(data);
@@ -231,66 +240,11 @@ var models = {
     },
 
     findLimited: function (data, callback) {
-        var newreturns = {};
-        newreturns.data = [];
-        var check = new RegExp(data.search, "i");
-        data.pagenumber = parseInt(data.pagenumber);
-        data.pagesize = parseInt(data.pagesize);
-        async.parallel([
-                function (callback) {
-                    Blog.count({
-                        name: {
-                            '$regex': check
-                        }
-                    }).exec(function (err, number) {
-                        if (err) {
-                            console.log(err);
-                            callback(err, null);
-                        } else if (number && number !== "") {
-                            newreturns.total = number;
-                            newreturns.totalpages = Math.ceil(number / data.pagesize);
-                            callback(null, newreturns);
-                        } else {
-                            callback(null, newreturns);
-                        }
-                    });
-                },
-                function (callback) {
-                    Blog.find({
-                        name: {
-                            '$regex': check
-                        }
-                    }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
-                        date: -1
-                    }).exec(function (err, data2) {
-                        if (err) {
-                            console.log(err);
-                            callback(err, null);
-                        } else if (data2 && data2.length > 0) {
-                            newreturns.data = data2;
-                            callback(null, newreturns);
-                        } else {
-                            callback(null, newreturns);
-                        }
-                    });
-                }
-            ],
-            function (err, data4) {
-                if (err) {
-                    console.log(err);
-                    callback(err, null);
-                } else if (data4) {
-                    callback(null, newreturns);
-                } else {
-                    callback(null, newreturns);
-                }
-            });
-    },
-
-    //To get blogs by tags
-    getBlogByTags: function (data, callback) {
         // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
         var queryString = {};
+        var newreturns = {};
+        var countObj = {};
+        newreturns.data = [];
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
         var tagIdArray = [];
@@ -306,7 +260,6 @@ var models = {
                     },
                 };
             }
-
             queryString.status = true
         } else if (data.search != "") {
             var trimText = data.search.trim();
@@ -327,42 +280,289 @@ var models = {
                     }
                 ];
             } else {
-                queryString.name = {
-                    $regex: search,
-                    $options: "i"
+                queryString = {
+                    "name": {
+                        $regex: search,
+                        $options: "i"
+                    }
                 }
             }
-            queryString.status = true
+            queryString.status = true;
+            console.log("queryString", queryString);
         }
 
-        Blog.aggregate([{
-                "$sort": {
-                    "date": -1
+        async.parallel([
+                function (callback) {
+                    if (data.search == "" || data.search == undefined) {
+                        countObj = {};
+                    } else {
+                        countObj = {
+                            "name": {
+                                $regex: search,
+                                $options: "i"
+                            }
+                        }
+                    }
+                    Blog.count(countObj).exec(function (err, number) {
+                        console.log("number count", number);
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else if (number && number !== "") {
+                            console.log("number", number);
+                            newreturns.total = number;
+                            newreturns.totalpages = Math.ceil(number / data.pagesize);
+                            callback(null, newreturns);
+                        } else {
+                            callback(null, newreturns);
+                        }
+                    });
+                },
+                function (callback) {
+                    Blog.aggregate([{
+                            "$sort": {
+                                "date": -1
+                            }
+                        }, {
+                            "$unwind": "$tags"
+                        },
+
+                        // Now filter those document for the elements that match
+                        {
+                            "$match": queryString
+                        },
+                        {
+                            "$skip": data.pagesize * (data.pagenumber - 1)
+                        },
+                        {
+                            "$limit": data.pagesize
+                        }
+
+                    ]).exec(function (err, tagFound) {
+                        // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
+                        if (err) {
+                            console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
+                            callback(err, []);
+                        } else {
+                            // Blog.populate("tags", "_id name")
+                            var option = {
+                                path: "tags",
+                                model: "Tags"
+                            }
+                            Blog.populate(tagFound, option, function (err, populatedTagFound) {
+                                newreturns.data = populatedTagFound;
+                                callback(null, newreturns);
+                            })
+
+                            // callback(null, newreturns);
+                        }
+                    })
                 }
-            }, {
-                "$unwind": "$tags"
-            },
+            ],
+            function (err, data4) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else if (data4) {
+                    callback(null, newreturns);
+                } else {
+                    callback(null, newreturns);
+                }
+            });
+    },
 
-            // Now filter those document for the elements that match
-            {
-                "$match": queryString
-            },
-            {
-                "$skip": data.pagesize * (data.pagenumber - 1)
-            },
-            {
-                "$limit": data.pagesize
+    //To get blogs by tags ---- currently not in use
+    getBlogByTags: function (data, callback) {
+        // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
+        var queryString = {};
+        var newreturns = {};
+        var countObj = {};
+        newreturns.data = [];
+        data.pagenumber = parseInt(data.pagenumber);
+        data.pagesize = parseInt(data.pagesize);
+        var tagIdArray = [];
+        _.each(data.tagId, function (n) {
+            tagIdArray.push(mongoose.Types.ObjectId(n));
+        });
+
+        if (data.search == "" || data.search == undefined) {
+            if (data.tagId.length > 0) {
+                queryString = {
+                    "tags": {
+                        $in: tagIdArray
+                    },
+                };
             }
-
-        ], function (err, tagFound) {
-            // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
-            if (err) {
-                console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
-                callback(err, []);
+            queryString.status = true
+        } else if (data.search != "") {
+            var trimText = data.search.trim();
+            var splitText = [];
+            splitText = trimText.split(' ');
+            var search = new RegExp('^' + trimText);
+            if (data.tagId.length > 0) {
+                queryString.$and = [{
+                        "tags": {
+                            $in: tagIdArray
+                        },
+                    },
+                    {
+                        "name": {
+                            $regex: search,
+                            $options: "i"
+                        }
+                    }
+                ];
             } else {
-                callback(null, tagFound);
+                queryString = {
+                    "name": {
+                        $regex: search,
+                        $options: "i"
+                    }
+                }
             }
-        })
+            queryString.status = true;
+            console.log("queryString", queryString);
+        }
+
+        async.parallel([
+                function (callback) {
+                    if (data.search == "" || data.search == undefined) {
+                        countObj = {};
+                    } else {
+                        countObj = {
+                            "name": {
+                                $regex: search,
+                                $options: "i"
+                            }
+                        }
+                    }
+                    Blog.count(countObj).exec(function (err, number) {
+                        console.log("number count", number);
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else if (number && number !== "") {
+                            console.log("number", number);
+                            newreturns.total = number;
+                            newreturns.totalpages = Math.ceil(number / data.pagesize);
+                            callback(null, newreturns);
+                        } else {
+                            callback(null, newreturns);
+                        }
+                    });
+                },
+                function (callback) {
+                    Blog.aggregate([{
+                            "$sort": {
+                                "date": -1
+                            }
+                        }, {
+                            "$unwind": "$tags"
+                        },
+
+                        // Now filter those document for the elements that match
+                        {
+                            "$match": queryString
+                        },
+                        {
+                            "$skip": data.pagesize * (data.pagenumber - 1)
+                        },
+                        {
+                            "$limit": data.pagesize
+                        }
+
+                    ]).exec(function (err, tagFound) {
+                        // console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err, tagFound);
+                        if (err) {
+                            console.log("Blog >>> getBlogByTags >>> Blog.aggregate >>> err", err);
+                            callback(err, []);
+                        } else {
+                            // Blog.populate("tags", "_id name")
+                            var option = {
+                                path: "tags",
+                                model: "Tags"
+                            }
+                            Blog.populate(tagFound, option, function (err, populatedTagFound) {
+                                newreturns.data = populatedTagFound;
+                                callback(null, newreturns);
+                            })
+
+                            // callback(null, newreturns);
+                        }
+                    })
+                }
+            ],
+            function (err, data4) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else if (data4) {
+                    callback(null, newreturns);
+                } else {
+                    callback(null, newreturns);
+                }
+            });
+
     }
 };
 module.exports = _.assign(module.exports, models);
+
+
+
+//findLimited code
+//   findLimited: function (data, callback) {
+//         var newreturns = {};
+//         newreturns.data = [];
+//         var check = new RegExp(data.search, "i");
+//         data.pagenumber = parseInt(data.pagenumber);
+//         data.pagesize = parseInt(data.pagesize);
+//         async.parallel([
+//                 function (callback) {
+//                     Blog.count({
+//                         name: {
+//                             '$regex': check
+//                         }
+//                     }).exec(function (err, number) {
+//                         if (err) {
+//                             console.log(err);
+//                             callback(err, null);
+//                         } else if (number && number !== "") {
+//                             newreturns.total = number;
+//                             newreturns.totalpages = Math.ceil(number / data.pagesize);
+//                             callback(null, newreturns);
+//                         } else {
+//                             callback(null, newreturns);
+//                         }
+//                     });
+//                 },
+//                 function (callback) {
+//                     Blog.find({
+//                         name: {
+//                             '$regex': check
+//                         }
+//                     }).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
+//                         date: -1
+//                     }).exec(function (err, data2) {
+//                         if (err) {
+//                             console.log(err);
+//                             callback(err, null);
+//                         } else if (data2 && data2.length > 0) {
+//                             newreturns.data = data2;
+//                             callback(null, newreturns);
+//                         } else {
+//                             callback(null, newreturns);
+//                         }
+//                     });
+//                 }
+//             ],
+//             function (err, data4) {
+//                 if (err) {
+//                     console.log(err);
+//                     callback(err, null);
+//                 } else if (data4) {
+//                     callback(null, newreturns);
+//                 } else {
+//                     callback(null, newreturns);
+//                 }
+//             });
+//     },
