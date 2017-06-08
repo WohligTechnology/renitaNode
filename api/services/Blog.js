@@ -320,7 +320,7 @@ var models = {
                     },
                 };
             }
-            queryString.status = "true"
+            queryString.status = true
         } else if (data.search != "") {
             var trimText = data.search.trim();
             var splitText = [];
@@ -345,7 +345,7 @@ var models = {
                     }
                 }
             }
-            queryString.status = "true";
+            queryString.status = true;
             console.log("queryString", queryString);
         }
 
@@ -353,7 +353,7 @@ var models = {
                 function (callback) {
                     if (data.search == "" || data.search == undefined) {
                         countObj = {
-                            "status": "true"
+                            "status": true
                         };
                     } else {
                         countObj = {
@@ -361,7 +361,7 @@ var models = {
                                 $regex: search,
                                 $options: "i"
                             },
-                            "status": "true"
+                            "status": true
                         }
                     }
                     Blog.count(countObj).exec(function (err, number) {
