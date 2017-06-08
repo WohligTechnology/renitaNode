@@ -370,7 +370,7 @@ var models = {
                             console.log(err);
                             callback(err, null);
                         } else if (number && number !== "") {
-                            console.log("number", number);
+                            // console.log("number", number);
                             newreturns.total = number;
                             newreturns.totalpages = Math.ceil(number / data.pagesize);
                             callback(null, newreturns);
@@ -380,7 +380,7 @@ var models = {
                     });
                 },
                 function (callback) {
-                    console.log("queryString", queryString);
+                    // console.log("queryString", queryString);
                     Blog.find(queryString).populate("tags", "_id name").skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).sort({
                         date: -1
                     }).exec(function (err, tagFound) {
