@@ -238,7 +238,7 @@ var models = {
             })
     },
 
-
+    //wroking code for ---- currently not in use
     findLimited: function (data, callback) {
         var newreturns = {};
         newreturns.data = [];
@@ -298,7 +298,7 @@ var models = {
 
 
 
-    //To get blogs by tags ---- currently not in use
+    //To get blogs by tags ---- currently in use
     getBlogByTags: function (data, callback) {
         // console.log("ObjectId(data.tagId)", mongoose.Types.ObjectId(data.tagId));
         var queryString = {};
@@ -346,7 +346,7 @@ var models = {
                 }
             }
             queryString.status = true;
-            console.log("queryString", queryString);
+            // console.log("queryString", queryString);
         }
 
         async.parallel([
@@ -365,7 +365,7 @@ var models = {
                         }
                     }
                     Blog.count(countObj).exec(function (err, number) {
-                        console.log("number count", number);
+                        // console.log("number count", number);
                         if (err) {
                             console.log(err);
                             callback(err, null);
