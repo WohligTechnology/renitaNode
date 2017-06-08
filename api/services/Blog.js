@@ -352,13 +352,16 @@ var models = {
         async.parallel([
                 function (callback) {
                     if (data.search == "" || data.search == undefined) {
-                        countObj = {};
+                        countObj = {
+                            "status": "true"
+                        };
                     } else {
                         countObj = {
                             "name": {
                                 $regex: search,
                                 $options: "i"
-                            }
+                            },
+                            "status": "true"
                         }
                     }
                     Blog.count(countObj).exec(function (err, number) {
