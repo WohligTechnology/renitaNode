@@ -25,7 +25,7 @@ var schema = new Schema({
 });
 module.exports = mongoose.model('Config', schema);
 var models = {
-    GlobalCallback: function(err, data, res) {
+    GlobalCallback: function (err, data, res) {
         if (err) {
             res.json({
                 error: err,
@@ -38,21 +38,21 @@ var models = {
             });
         }
     },
-    
-    email: function(data, callback) {
-        Password.find().exec(function(err, userdata) {
+
+    email: function (data, callback) {
+        Password.find().exec(function (err, userdata) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else if (userdata && userdata.length > 0) {
-              console.log(data);
+                console.log(data);
                 if (data.filename && data.filename !== "") {
                     request.post({
                         url: requrl + "config/emailReader/",
                         json: data
-                    }, function(err, http, body) {
-                      console.log(err);
-                      console.log(body);
+                    }, function (err, http, body) {
+                        console.log(err);
+                        console.log(body);
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -65,7 +65,7 @@ var models = {
                                     subject: data.subject,
                                     fromname: 'Renita Skin Clinic',
                                     html: body
-                                }, function(err, json) {
+                                }, function (err, json) {
                                     if (err) {
                                         callback(err, null);
                                     } else {
@@ -73,15 +73,21 @@ var models = {
                                     }
                                 });
                             } else {
-                                callback({ message: "Some error in html" }, null);
+                                callback({
+                                    message: "Some error in html"
+                                }, null);
                             }
                         }
                     });
                 } else {
-                    callback({ message: "Please provide params" }, null);
+                    callback({
+                        message: "Please provide params"
+                    }, null);
                 }
             } else {
-                callback({ message: "No api keys found" }, null);
+                callback({
+                    message: "No api keys found"
+                }, null);
             }
         });
     },
@@ -97,6 +103,7 @@ var models = {
         var writestream = gfs.createWriteStream({
             filename: newFilename
         });
+
         writestream.on('finish', function () {
             callback(null, {
                 name: newFilename
@@ -124,15 +131,11 @@ var models = {
                             bufferStream.pipe(writestream);
                         });
                     }
-
                 }
-
             });
         } else {
             imageStream.pipe(writestream);
         }
-
-
     },
     readUploaded: function (filename, width, height, style, res) {
         res.set({
@@ -168,7 +171,8 @@ var models = {
             if (proceedI === 2) {
                 Jimp.read(buf, function (err, image) {
                     if (err) {
-                        callback(err, null);
+                        console.log(err);
+                        res.callback(err, null);
                     } else {
                         if (style === "contain" && width && height) {
                             image.contain(width, height).getBuffer(Jimp.AUTO, writer2);
