@@ -6,17 +6,17 @@
  */
 
 module.exports = {
-    index: function(req, res) {
+    index: function (req, res) {
         function callback2(err) {
             Config.GlobalCallback(err, fileNames, res);
         }
         var fileNames = [];
         req.file("file").upload({
             maxBytes: 10000000 // 10 MB Storage 1 MB = 10^6
-        }, function(err, uploadedFile) {
+        }, function (err, uploadedFile) {
             if (uploadedFile && uploadedFile.length > 0) {
-                async.each(uploadedFile, function(n, callback) {
-                    Config.uploadFile(n.fd, function(err, value) {
+                async.each(uploadedFile, function (n, callback) {
+                    Config.uploadFile(n.fd, function (err, value) {
                         if (err) {
                             callback(err);
                         } else {
@@ -33,10 +33,29 @@ module.exports = {
             }
         });
     },
-    readFile: function(req, res) {
-        Config.readUploaded(req.query.file, req.query.width, req.query.height, req.query.style, res);
+    readFile: function (req, res) {
+        if (req.query.file) {
+            var width;
+            var height;
+            if (req.query.width) {
+                width = parseInt(req.query.width);
+                if (_.isNaN(width)) {
+                    width = undefined;
+                }
+            }
+            if (req.query.height) {
+                height = parseInt(req.query.height);
+                if (_.isNaN(height)) {
+                    height = undefined;
+                }
+            }
+            Config.readUploaded(req.query.file, width, height, req.query.style, res);
+        } else {
+            res.callback("No Such File Found");
+        }
+
     },
-    wallpaper: function(req, res) {
+    wallpaper: function (req, res) {
         Config.readUploaded(req.query.file, req.query.width, req.query.height, req.query.style, res);
     }
 };
