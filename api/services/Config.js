@@ -8,6 +8,7 @@
 var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 var fs = require("fs");
+var stream = require('stream');
 var Jimp = require("jimp");
 var process = require('child_process');
 var lodash = require('lodash');
