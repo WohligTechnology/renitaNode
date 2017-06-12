@@ -6,6 +6,12 @@
  */
 var fs = require("fs");
 var request = require("request");
+    global["database"] = "sfa";
+    global["mongoose"] =  require('mongoose');
+    global["fs"] =  require('fs');
+    global["exec"] = require('child_process').exec;
+    global["moment"] = require("moment");
+
 // var checksum = require('./checksum');
 module.exports = {
     backupDatabase: function (req, res) {
