@@ -19,7 +19,7 @@ module.exports = {
         req.connection.setTimeout(200000000);
         var q = req.host.search("127.0.0.1");
         if (q >= 0) {
-            _.times(20, function (n) {
+            _.times(100, function (n) {
                 var name = moment().subtract(3 + n, "days").format("ddd-Do-MMM-YYYY");
                 exec("cd backup && rm -rf " + name + "*", function (err, stdout, stderr) {});
             });
