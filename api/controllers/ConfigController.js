@@ -19,10 +19,12 @@ module.exports = {
         req.connection.setTimeout(200000000);
         var q = req.host.search("127.0.0.1");
         if (q >= 0) {
-            _.times(100, function (n) {
-                var name = moment().subtract(1 + n, "days").format("ddd-Do-MMM-YYYY");
+            _.times(20, function (n) {
+                var name = moment().subtract(2 + n, "days").format("ddd-Do-MMM-YYYY");
+                //console.log(name);
                 exec("cd backup && rm -rf " + name + "*", function (err, stdout, stderr) {});
             });
+            res.callback(null, "Rest of Files Deleted and the current one will be generated Now.");
             var jagz = _.map(mongoose.models, function (Model, key) {
                 var name = Model.collection.collectionName;
                 return {
@@ -46,12 +48,12 @@ module.exports = {
             var retVal = [];
             fs.mkdirSync(folderName);
             async.eachSeries(jagz, function (obj, callback) {
-                exec("mongoexport --db " + database + " --collection " + obj.name + " --out " + folderName + "/" + obj.name + ".json", function (data1, data2, data3) {
+                exec("mongoexport --port " + port + " --username " + username + " --password " + password + " --db " + database + " --collection " + obj.name + " --out " + folderName + "/" + obj.name + ".json", function (data1, data2, data3) {
                     retVal.push(data3 + " VALUES OF " + obj.name + " MODEL NAME " + obj.key);
                     callback();
                 });
             }, function () {
-                res.json(retVal);
+                // res.json(retVal);
             });
         } else {
             res.callback("Access Denied for Database Backup");
