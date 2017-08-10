@@ -14,51 +14,7 @@ global["moment"] = require("moment");
 
 // var checksum = require('./checksum');
 module.exports = {
-    backupDatabase: function (req, res) {
-        res.connection.setTimeout(200000000);
-        req.connection.setTimeout(200000000);
-        var q = req.host.search("127.0.0.1");
-        if (q >= 0) {
-            _.times(20, function (n) {
-                var name = moment().subtract(2 + n, "days").format("ddd-Do-MMM-YYYY");
-                //console.log(name);
-                exec("cd backup && rm -rf " + name + "*", function (err, stdout, stderr) {});
-            });
-            res.callback(null, "Rest of Files Deleted and the current one will be generated Now.");
-            var jagz = _.map(mongoose.models, function (Model, key) {
-                var name = Model.collection.collectionName;
-                return {
-                    key: key,
-                    name: name,
-                };
-            });
-            jagz.push({
-                "key": "fs.chunks",
-                "name": "fs.chunks"
-            }, {
-                "key": "fs.files",
-                "name": "fs.files"
-            });
-            var isBackup = fs.existsSync("./backup");
-            if (!isBackup) {
-                fs.mkdirSync("./backup");
-            }
-            var mom = moment();
-            var folderName = "./backup/" + mom.format("ddd-Do-MMM-YYYY-HH-mm-SSSSS");
-            var retVal = [];
-            fs.mkdirSync(folderName);
-            async.eachSeries(jagz, function (obj, callback) {
-                exec("mongoexport --port " + port + " --username " + username + " --password " + password + " --db " + database + " --collection " + obj.name + " --out " + folderName + "/" + obj.name + ".json", function (data1, data2, data3) {
-                    retVal.push(data3 + " VALUES OF " + obj.name + " MODEL NAME " + obj.key);
-                    callback();
-                });
-            }, function () {
-                // res.json(retVal);
-            });
-        } else {
-            res.callback("Access Denied for Database Backup");
-        }
-    },
+
     saveData: function (req, res) {
         if (req.body) {
             Config.saveData(req.body, function (err, respo) {
@@ -169,7 +125,7 @@ module.exports = {
         var exec = require('child_process').exec;
         var q = req.host.search("127.0.0.1");
         var database = "renita";
-        if (true) {
+        if (q >= 0) {
             _.times(20, function (n) {
                 var name = moment().subtract(2 + n, "days").format("ddd-Do-MMM-YYYY");
                 //console.log(name);
