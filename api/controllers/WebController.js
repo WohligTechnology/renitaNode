@@ -48,6 +48,7 @@ module.exports = {
     },
 
     category: function (req, res) {
+        console.log("---------------------------------");
         var temp1 = req.params[0];
         var count1 = (temp1.match(/[/]/g) || []).length;
         if (req.params || count1 == 1) {
@@ -91,6 +92,7 @@ module.exports = {
     },
 
     blog: function (req, res) {
+        console.log("---------------------------------");        
         var temp1 = req.params[0];
         if (req.params) {
             var blogID = temp1.slice(temp1.lastIndexOf('/') + 1, temp1.length);
