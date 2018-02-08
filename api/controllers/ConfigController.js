@@ -6,6 +6,7 @@
  */
 var fs = require("fs");
 var request = require("request");
+var sm = require('sitemap');
 global["database"] = "sfa";
 global["mongoose"] = require('mongoose');
 global["fs"] = require('fs');
@@ -165,5 +166,88 @@ module.exports = {
         } else {
             res.callback("Access Denied for Database Backup");
         }
-    }
+    },
+
+    sitemapXml: function (req, res) {
+        sitemap = sm.createSitemap({
+            hostname: 'http://renderclinic.com/',
+            cacheTime: 600000, // 600 sec - cache purge period
+            urls: [{
+                    url: '/http://renderclinic.com/category/RenderShape/59f6fabf1f936c215273632e/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/category/Skin/57a994734639006667c61e6f/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/category/Hair%20and%20Scalp/57ac6b71e52b52620839dbf9/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/category/Body/57ac6b7ae52b52620839dbfa/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/category/Treatments/57ac6b8ee52b52620839dbfc/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/category/Mommy%20Derm/57ac6b98e52b52620839dbfd/',
+                    changefreq: 'daily',
+                    priority: 0.3
+                },
+                {
+                    url: '/http://renderclinic.com/about-us/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/team/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/consultant/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/before-after/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/testimonial/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                }, // changefreq: 'weekly',  priority: 0.5
+                {
+                    url: '/http://renderclinic.com/blog/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/clinic-policy/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                },
+                {
+                    url: '/http://renderclinic.com/contact/',
+                    changefreq: 'monthly',
+                    priority: 0.7
+                }
+                // {
+                //     url: '/http://renderclinic.com/team/',
+                //     img: "http://urlTest.com"
+                // }
+            ]
+        });
+        fs.writeFileSync(".tmp/sitemap.xml", sitemap.toString());
+    },
 };
