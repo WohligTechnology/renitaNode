@@ -208,5 +208,63 @@ module.exports = {
     //To get blogs by tags
     getBlogByTags: function (req, res) {
         Blog.getBlogByTags(req.body, res.callback);
+    },
+    getNextBlog: function (req, res) {
+        if (req.body) {
+            if (req.body.blogDate && req.body.blogDate != "") {
+                Blog.getNextBlog(req.body, function (err, respo) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: respo
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid date"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getPrevBlog: function (req, res) {
+        if (req.body) {
+            if (req.body.blogDate && req.body.blogDate != "") {
+                Blog.getPrevBlog(req.body, function (err, respo) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: respo
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid date"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     }
 };

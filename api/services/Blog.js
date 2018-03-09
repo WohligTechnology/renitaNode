@@ -408,6 +408,56 @@ var models = {
                     callback(null, newreturns);
                 }
             });
+    },
+    getNextBlog:  function (data, callback) {
+        var blogDate=data.blogDate;
+        console.log("blogDate",blogDate);
+        var ltDate = new Date();
+        this.find({
+            timestamp: {
+                $gt: blogDate,
+                $lte: ltDate
+            }
+        }).sort({
+            timestamp: 1
+        }).limit(1).exec(function (err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (found && Object.keys(found).length > 0) {
+                // console.log("found",found);
+                found=found[0]._id;
+                callback(null, found);
+            } else {
+                console.log("empty",found);
+                callback(null, {});
+            }
+        });
+    },
+    getPrevBlog: function (data, callback) {
+        var blogDate=data.blogDate;
+        console.log("blogDate",blogDate);
+        var gtDate = '2000-09-07T12:33:32.477Z'
+        this.find({
+            timestamp: {
+                $gt: gtDate,                
+                $lt: blogDate           
+            }
+        }).sort({
+            timestamp: -1
+        }).limit(1).exec(function (err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (found && Object.keys(found).length > 0) {
+                // console.log("found",found);
+                found=found[0]._id;
+                callback(null, found);
+            } else {
+                console.log("empty",found);
+                callback(null, {});
+            }
+        });
     }
 };
 module.exports = _.assign(module.exports, models);
